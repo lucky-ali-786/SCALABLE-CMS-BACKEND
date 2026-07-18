@@ -5,8 +5,12 @@ import connectDB from '../db/conect.db.js';
 import nodemailer from "nodemailer";
 import sanitizeHtml from 'sanitize-html';
 import { Post } from "../models/posts.models.js";
+import express from 'express';
 import path from 'path'; 
-
+const app = express();
+const PORT = process.env.PORT || 10000;
+app.get('/health', (req, res) => res.status(200).send('Worker is awake!'));
+app.listen(PORT, () => console.log(`🚀 Dummy web server running on port ${PORT}`));
 connectDB().then(() => {
     console.log("✅ Worker successfully connected to MongoDB");
 }).catch((err) => {
