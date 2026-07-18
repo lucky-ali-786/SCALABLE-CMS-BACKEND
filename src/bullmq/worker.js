@@ -23,13 +23,17 @@ connection.on("connect", () => {
 });
 
 const worker = new Worker("email-queue", async (job) => {
-  let transporter = nodemailer.createTransport({
+let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // Use SSL/TLS
+        port: 587, // Changed from 465
+        secure: false, // MUST be false when using port 587
         auth: {
             user: process.env.ADMIN_EMAIL,
             pass: process.env.PASSWORD
+        },
+        tls: {
+            // Do not fail on invalid certs in cloud environments
+            rejectUnauthorized: false
         }
     });
     let mailOptions = {
