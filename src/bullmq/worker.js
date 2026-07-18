@@ -1,39 +1,40 @@
-import 'dotenv/config'; // Crucial: Workers need env variables too!
+import 'dotenv/config'; 
 import { Worker } from "bullmq";
 import { connection } from "../db/redis.js";
 import connectDB from '../db/conect.db.js';
 import nodemailer from "nodemailer";
 import sanitizeHtml from 'sanitize-html';
 import { Post } from "../models/posts.models.js";
-import path from 'path'; // Added for safer file paths
+import path from 'path'; 
+
 connectDB().then(() => {
     console.log("✅ Worker successfully connected to MongoDB");
 }).catch((err) => {
     console.log("❌ Worker failed to connect to MongoDB", err);
-    process.exit(1); // Kill worker if DB fails
+    process.exit(1); 
 });
+
 connection.on("connect", () => {
     console.log("✅ Worker connected to Redis (Listening for jobs...)");
 });
+
 const worker = new Worker("email-queue", async (job) => {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'luckyali7666@gmail.com',
+            user: process.env.ADMIN_EMAIL,
             pass: process.env.PASSWORD
         }
     });
 
     let mailOptions = {
-        from: 'luckyali7666@gmail.com',
+        from: process.env.ADMIN_EMAIL,
         to: `${job.data.email}`,
         subject: `BLOGGER sent you a message`,
         html: job.data.message.htmlTemplate,
         attachments: [{
             filename: 'photo.png',
-            // Note: If you deploy this, C:\REACT\... will break on the cloud server. 
-            // It is safer to use relative paths with path.join or __dirname.
-            path: 'C:\\REACT\\backend\\src\\bullmq\\photo.png',
+            path: path.join(process.cwd(), 'src', 'bullmq', 'photo.png'),
             cid: 'logo'
         }]
     };
@@ -42,7 +43,7 @@ const worker = new Worker("email-queue", async (job) => {
         await transporter.sendMail(mailOptions);
     } catch (error) {
         console.log("Error sending email: " + error.message);
-        throw error; // Throw error so BullMQ marks the job as failed
+        throw error; 
     }
 }, {
     connection,
@@ -82,7 +83,7 @@ const postworker = new Worker('post-queue', async (job) => {
             userId: job.data.userId
         });
 
-        await newPost.save(); // This works now because we connected to MongoDB above!
+        await newPost.save(); 
     } catch (err) {
         throw new Error(err.message);
     }
@@ -95,7 +96,7 @@ postworker.on('completed', (job) => {
     console.log(`✅ Post Job ${job.id} is completed`);
 });
 
-postworker.on('failed', (job, err) => { // Fixed argument order (job, err)
+postworker.on('failed', (job, err) => { 
     console.log(`❌ Post Job failed:`, err.message);
 });
 
