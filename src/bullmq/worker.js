@@ -23,14 +23,15 @@ connection.on("connect", () => {
 });
 
 const worker = new Worker("email-queue", async (job) => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
+  let transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, // Use SSL/TLS
         auth: {
             user: process.env.ADMIN_EMAIL,
             pass: process.env.PASSWORD
         }
     });
-
     let mailOptions = {
         from: process.env.ADMIN_EMAIL,
         to: `${job.data.email}`,
