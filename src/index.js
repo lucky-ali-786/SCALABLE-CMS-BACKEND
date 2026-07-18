@@ -2,7 +2,6 @@ import 'dotenv/config';
 import connectDB from "./db/conect.db.js"
 import { verifyTurnstileToken } from './utils/turnstile.js';
 import {connection} from "./db/redis.js"
-import { worker,postworker } from "./bullmq/worker.js"
 import { emailqueue } from "./bullmq/producer.js"
 import {app,server} from './app.js'
 import { uploadFileOnCloudinary } from './utils/cloudinary.js';
@@ -21,5 +20,3 @@ connection.on("error", (err) => {
   console.error("❌ Redis error:", err);
 });
 export {app};
-// jisme bhi use hai .env ka usko import krdo in index.js
-
