@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "My API",
-    "description": "Description",
+    "title": "NEXUS CMS API",
+    "description": "API documentation for NEXUS Asynchronous Content Platform",
     "version": "1.0.0"
   },
   "host": "localhost:8000",
@@ -42,8 +42,8 @@
       "get": {
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -177,6 +177,9 @@
                 },
                 "password": {
                   "example": "any"
+                },
+                "captchaToken": {
+                  "example": "any"
                 }
               }
             }
@@ -271,6 +274,9 @@
                 },
                 "password": {
                   "example": "any"
+                },
+                "captchaToken": {
+                  "example": "any"
                 }
               }
             }
@@ -302,6 +308,30 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/posts/api/v1/generate-blog": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
